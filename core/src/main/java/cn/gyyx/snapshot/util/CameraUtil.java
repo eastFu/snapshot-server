@@ -72,8 +72,9 @@ public class CameraUtil {
     public static File pdfToImg(File pdf,String imgSuffix){
         String fileName=System.currentTimeMillis()+"."+imgSuffix;
         File img =new File(Constant.getImgFilePath()+fileName);
+        PDDocument doc =null;
         try {
-            PDDocument doc = PDDocument.load(pdf);
+            doc = PDDocument.load(pdf);
             PDFRenderer renderer = new PDFRenderer(doc);
             int pageCount = doc.getNumberOfPages();
             for(int i=0; i<pageCount; i++){
@@ -81,10 +82,19 @@ public class CameraUtil {
                 ImageIO.write(image,imgSuffix,img);
             }
             System.out.println("snapshot server success to take a img file :"+fileName);
+            doc.close();
             return img;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
+        }finally {
+            if(doc!=null){
+                try {
+                    doc.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }
